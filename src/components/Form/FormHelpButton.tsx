@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 
 import { Button, Card, CardBody, CardHeader, UncontrolledPopover } from 'reactstrap'
 
 import { FaQuestion } from 'react-icons/fa'
 
 import './FormHelpButton.scss'
+import { useOuterClickNotifier } from '../../helpers/hooks'
 
 function safeId(id: string) {
   return id.replace('.', '-')
@@ -17,9 +18,15 @@ export interface FormHelpButtonProps {
 }
 
 export default function FormHelpButton({ identifier, label, help }: FormHelpButtonProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>();
+
+  useOuterClickNotifier(e => setPopoverOpen(false), buttonRef);
+
   return (
     <>
       <Button
+        ref={buttonRef}
         id={safeId(identifier)}
         className="help-button"
         type="button"
@@ -27,6 +34,7 @@ export default function FormHelpButton({ identifier, label, help }: FormHelpButt
         onClick={e => {
           e.preventDefault()
           e.stopPropagation()
+          setPopoverOpen(!popoverOpen)
         }}
       >
         <FaQuestion className="help-button-icon" />
